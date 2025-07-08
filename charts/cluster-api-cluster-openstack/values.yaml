@@ -10,19 +10,24 @@ version: v1.30.2
 # Contains credentials for the cloud, networking options and other
 # Values in this object are considered immutable.
 openstack:
-  # Name of the cloud in clouds.yaml.
-  cloud: my-cloud
+  # The name of a secret containing a clouds.yaml and optional cacert.
+  # If not given, cloudsYAML and ca are used.
+  cloudConfigSecret:
 
-  # cloud.yaml file, base64 encoded.
+  # clouds.yaml file, base64 encoded.
+  # Only used if cloudConfigSecret is not given.
   cloudsYAML: Y2hhbmdlIG1lIQ==
+  # Openstack endpoint CA, base64 encoded.
+  # ca: Y2hhbmdlIG1lIQ==
+
+  # Name of the cloud in clouds.yaml.
+  # Applies regardless of whether an existing secret is used or cloudYAML is given.
+  cloud: my-cloud
 
   # External (public) network ID.
   # If one is not specified, CAPO will use the only network it finds, otherwise
   # it will error.
   # externalNetworkID: b19ce45a-3278-48e4-8a0e-83100af68778
-
-  # Openstack endpoint CA, base64 encoded.
-  # ca: Y2hhbmdlIG1lIQ==
 
   # SSH key.
   #

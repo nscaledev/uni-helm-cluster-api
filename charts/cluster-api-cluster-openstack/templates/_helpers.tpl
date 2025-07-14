@@ -13,7 +13,11 @@ dev/staging/production CAPI instances.
 {{- end }}
 
 {{- define "cloudconfig.name" }}
+{{- if .Values.openstack.cloudConfigSecret }}
+{{- .Values.openstack.cloudConfigSecret }}
+{{- else }}
 {{- printf "%s-cloud-config" .Release.Name }}
+{{- end }}
 {{- end }}
 
 {{/*

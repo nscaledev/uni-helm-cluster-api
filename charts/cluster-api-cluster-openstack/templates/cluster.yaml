@@ -70,6 +70,7 @@ spec:
   externalNetwork:
     id: {{ $net }}
   {{- end }}
+{{- if not .Values.openstack.cloudConfigSecret }}
 ---
 apiVersion: v1
 kind: Secret
@@ -87,3 +88,4 @@ data:
   {{- if .Values.openstack.ca }}
   cacert: {{ .Values.openstack.ca }}
   {{- end }}
+{{- end }}

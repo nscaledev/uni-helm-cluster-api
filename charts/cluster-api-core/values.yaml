@@ -1,10 +1,10 @@
 capi_diagnostics_address: :8080
 capi_insecure_diagnostics: true
-capi_use_deprecated_infra_machine_naming: false
 cluster_topology: false
 exp_cluster_resource_set: true
 exp_machine_pool: true
 exp_machine_set_preflight_checks: true
 exp_machine_waitforvolumedetach_consider_volumeattachments: true
+exp_priority_queue: false
 exp_runtime_sdk: false
-image: registry.k8s.io/cluster-api/cluster-api-controller:v1.9.4
+image: registry.k8s.io/cluster-api/cluster-api-controller:v1.10.4

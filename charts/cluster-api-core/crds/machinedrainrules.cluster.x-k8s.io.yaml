@@ -3,7 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: capi-system/capi-serving-cert
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.17.2
   labels:
     cluster.x-k8s.io/provider: cluster-api
   name: machinedrainrules.cluster.x-k8s.io
@@ -82,7 +82,7 @@ spec:
                   behavior:
                     description: 'behavior defines the drain behavior.
 
-                      Can be either "Drain" or "Skip".
+                      Can be either "Drain", "Skip", or "WaitCompleted".
 
                       "Drain" means that the Pods to which this MachineDrainRule applies
                       will be drained.
@@ -102,10 +102,17 @@ spec:
                       with the next group.
 
                       "Skip" means that the Pods to which this MachineDrainRule applies
-                      will be skipped during drain.'
+                      will be skipped during drain.
+
+                      "WaitCompleted" means that the pods to which this MachineDrainRule
+                      applies will never be evicted
+
+                      and we wait for them to be completed, it is enforced that pods
+                      marked with this behavior always have Order=0.'
                     enum:
                     - Drain
                     - Skip
+                    - WaitCompleted
                     type: string
                   order:
                     description: 'order defines the order in which Pods are drained.
@@ -298,6 +305,9 @@ spec:
                 minItems: 1
                 type: array
                 x-kubernetes-list-type: atomic
+                x-kubernetes-validations:
+                - message: entries in machines must be unique
+                  rule: self.all(x, self.exists_one(y, x == y))
               pods:
                 description: "pods defines to which Pods this MachineDrainRule should\
                   \ be applied.\n\nIf pods is not set, the MachineDrainRule applies\
@@ -471,6 +481,9 @@ spec:
                 minItems: 1
                 type: array
                 x-kubernetes-list-type: atomic
+                x-kubernetes-validations:
+                - message: entries in pods must be unique
+                  rule: self.all(x, self.exists_one(y, x == y))
             required:
             - drain
             type: object

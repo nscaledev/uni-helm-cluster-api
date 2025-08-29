@@ -23,7 +23,7 @@ spec:
         - --leader-elect
         - --diagnostics-address={{ .Values.capi_diagnostics_address }}
         - --insecure-diagnostics={{ .Values.capi_insecure_diagnostics }}
-        - --feature-gates=MachinePool={{ .Values.exp_machine_pool }},KubeadmBootstrapFormatIgnition={{ .Values.exp_kubeadm_bootstrap_format_ignition }}
+        - --feature-gates=MachinePool={{ .Values.exp_machine_pool }},KubeadmBootstrapFormatIgnition={{ .Values.exp_kubeadm_bootstrap_format_ignition }},PriorityQueue={{ .Values.exp_priority_queue }}
         - --bootstrap-token-ttl={{ .Values.kubeadm_bootstrap_token_ttl }}
         - --logging-format=json
         command:

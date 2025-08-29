@@ -1,9 +1,9 @@
 # Update this for every tagged release.
-CHART_VERSION = v0.2.5
+CHART_VERSION = v0.2.6
 
 # Defines the versions to use for cluster API components.
-CAPI_VERSION = v1.9.4
-CAPO_VERSION = v0.12.0
+CAPI_VERSION = v1.10.4
+CAPO_VERSION = v0.12.4
 
 # CAPO requires ORC.
 ORC_VERSION = v1.0.0

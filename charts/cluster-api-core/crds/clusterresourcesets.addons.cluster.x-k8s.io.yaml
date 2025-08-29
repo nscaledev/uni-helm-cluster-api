@@ -3,7 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: capi-system/capi-serving-cert
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.17.2
   labels:
     cluster.x-k8s.io/provider: cluster-api
   name: clusterresourcesets.addons.cluster.x-k8s.io
@@ -66,10 +66,11 @@ spec:
           metadata:
             type: object
           spec:
-            description: ClusterResourceSetSpec defines the desired state of ClusterResourceSet.
+            description: spec is the desired state of ClusterResourceSet.
             properties:
               clusterSelector:
-                description: 'Label selector for Clusters. The Clusters that are
+                description: 'clusterSelector is the label selector for Clusters.
+                  The Clusters that are
 
                   selected by this will be the ones affected by this ClusterResourceSet.
 
@@ -162,7 +163,7 @@ spec:
             - clusterSelector
             type: object
           status:
-            description: ClusterResourceSetStatus defines the observed state of ClusterResourceSet.
+            description: status is the observed state of ClusterResourceSet.
             properties:
               conditions:
                 description: conditions defines current state of the ClusterResourceSet.
@@ -171,8 +172,8 @@ spec:
                     operational state.
                   properties:
                     lastTransitionTime:
-                      description: 'Last time the condition transitioned from one
-                        status to another.
+                      description: 'lastTransitionTime is the last time the condition
+                        transitioned from one status to another.
 
                         This should be when the underlying condition changed. If that
                         is not known, then using the time when
@@ -181,14 +182,14 @@ spec:
                       format: date-time
                       type: string
                     message:
-                      description: 'A human readable message indicating details about
-                        the transition.
+                      description: 'message is a human readable message indicating
+                        details about the transition.
 
                         This field may be empty.'
                       type: string
                     reason:
-                      description: 'The reason for the condition''s last transition
-                        in CamelCase.
+                      description: 'reason is the reason for the condition''s last
+                        transition in CamelCase.
 
                         The specific API may choose whether or not this field is considered
                         a guaranteed API.
@@ -273,10 +274,11 @@ spec:
           metadata:
             type: object
           spec:
-            description: ClusterResourceSetSpec defines the desired state of ClusterResourceSet.
+            description: spec is the desired state of ClusterResourceSet.
             properties:
               clusterSelector:
-                description: 'Label selector for Clusters. The Clusters that are
+                description: 'clusterSelector is the label selector for Clusters.
+                  The Clusters that are
 
                   selected by this will be the ones affected by this ClusterResourceSet.
 
@@ -371,7 +373,7 @@ spec:
             - clusterSelector
             type: object
           status:
-            description: ClusterResourceSetStatus defines the observed state of ClusterResourceSet.
+            description: status is the observed state of ClusterResourceSet.
             properties:
               conditions:
                 description: conditions defines current state of the ClusterResourceSet.
@@ -380,8 +382,8 @@ spec:
                     operational state.
                   properties:
                     lastTransitionTime:
-                      description: 'Last time the condition transitioned from one
-                        status to another.
+                      description: 'lastTransitionTime is the last time the condition
+                        transitioned from one status to another.
 
                         This should be when the underlying condition changed. If that
                         is not known, then using the time when
@@ -390,14 +392,14 @@ spec:
                       format: date-time
                       type: string
                     message:
-                      description: 'A human readable message indicating details about
-                        the transition.
+                      description: 'message is a human readable message indicating
+                        details about the transition.
 
                         This field may be empty.'
                       type: string
                     reason:
-                      description: 'The reason for the condition''s last transition
-                        in CamelCase.
+                      description: 'reason is the reason for the condition''s last
+                        transition in CamelCase.
 
                         The specific API may choose whether or not this field is considered
                         a guaranteed API.
@@ -448,8 +450,10 @@ spec:
     name: v1beta1
     schema:
       openAPIV3Schema:
-        description: ClusterResourceSet is the Schema for the clusterresourcesets
+        description: 'ClusterResourceSet is the Schema for the clusterresourcesets
           API.
+
+          For advanced use cases an add-on provider should be used instead.'
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -478,10 +482,11 @@ spec:
           metadata:
             type: object
           spec:
-            description: ClusterResourceSetSpec defines the desired state of ClusterResourceSet.
+            description: spec is the desired state of ClusterResourceSet.
             properties:
               clusterSelector:
-                description: 'Label selector for Clusters. The Clusters that are
+                description: 'clusterSelector is the label selector for Clusters.
+                  The Clusters that are
 
                   selected by this will be the ones affected by this ClusterResourceSet.
 
@@ -559,12 +564,14 @@ spec:
                     name:
                       description: name of the resource that is in the same namespace
                         with ClusterResourceSet object.
+                      maxLength: 253
                       minLength: 1
                       type: string
                   required:
                   - kind
                   - name
                   type: object
+                maxItems: 100
                 type: array
               strategy:
                 description: strategy is the strategy to be used during applying resources.
@@ -577,7 +584,7 @@ spec:
             - clusterSelector
             type: object
           status:
-            description: ClusterResourceSetStatus defines the observed state of ClusterResourceSet.
+            description: status is the observed state of ClusterResourceSet.
             properties:
               conditions:
                 description: conditions defines current state of the ClusterResourceSet.
@@ -586,8 +593,8 @@ spec:
                     operational state.
                   properties:
                     lastTransitionTime:
-                      description: 'Last time the condition transitioned from one
-                        status to another.
+                      description: 'lastTransitionTime is the last time the condition
+                        transitioned from one status to another.
 
                         This should be when the underlying condition changed. If that
                         is not known, then using the time when
@@ -596,19 +603,23 @@ spec:
                       format: date-time
                       type: string
                     message:
-                      description: 'A human readable message indicating details about
-                        the transition.
+                      description: 'message is a human readable message indicating
+                        details about the transition.
 
                         This field may be empty.'
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
-                      description: 'The reason for the condition''s last transition
-                        in CamelCase.
+                      description: 'reason is the reason for the condition''s last
+                        transition in CamelCase.
 
                         The specific API may choose whether or not this field is considered
                         a guaranteed API.
 
                         This field may be empty.'
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: 'severity provides an explicit classification of
@@ -617,6 +628,7 @@ spec:
                         understand the current situation and act accordingly.
 
                         The Severity field MUST be set only when Status=False.'
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -629,6 +641,8 @@ spec:
 
                         can be useful (see .node.status.conditions), the ability to
                         deconflict is important.'
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime

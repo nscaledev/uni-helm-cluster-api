@@ -3,10 +3,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: capo-system/capo-serving-cert
-    controller-gen.kubebuilder.io/version: v0.16.5
+    controller-gen.kubebuilder.io/version: v0.18.0
   labels:
     cluster.x-k8s.io/provider: infrastructure-openstack
-    cluster.x-k8s.io/v1beta1: v1alpha7_v1beta1
+    cluster.x-k8s.io/v1beta1: v1beta1
   name: openstackservers.infrastructure.cluster.x-k8s.io
 spec:
   group: infrastructure.cluster.x-k8s.io
@@ -1164,8 +1164,8 @@ spec:
                     operational state.
                   properties:
                     lastTransitionTime:
-                      description: 'Last time the condition transitioned from one
-                        status to another.
+                      description: 'lastTransitionTime is the last time the condition
+                        transitioned from one status to another.
 
                         This should be when the underlying condition changed. If that
                         is not known, then using the time when
@@ -1174,19 +1174,23 @@ spec:
                       format: date-time
                       type: string
                     message:
-                      description: 'A human readable message indicating details about
-                        the transition.
+                      description: 'message is a human readable message indicating
+                        details about the transition.
 
                         This field may be empty.'
+                      maxLength: 10240
+                      minLength: 1
                       type: string
                     reason:
-                      description: 'The reason for the condition''s last transition
-                        in CamelCase.
+                      description: 'reason is the reason for the condition''s last
+                        transition in CamelCase.
 
                         The specific API may choose whether or not this field is considered
                         a guaranteed API.
 
                         This field may be empty.'
+                      maxLength: 256
+                      minLength: 1
                       type: string
                     severity:
                       description: 'severity provides an explicit classification of
@@ -1195,6 +1199,7 @@ spec:
                         understand the current situation and act accordingly.
 
                         The Severity field MUST be set only when Status=False.'
+                      maxLength: 32
                       type: string
                     status:
                       description: status of the condition, one of True, False, Unknown.
@@ -1207,6 +1212,8 @@ spec:
 
                         can be useful (see .node.status.conditions), the ability to
                         deconflict is important.'
+                      maxLength: 256
+                      minLength: 1
                       type: string
                   required:
                   - lastTransitionTime

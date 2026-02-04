@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: v1.11.1
+appVersion: v1.11.5
 description: A Helm chart for deploying cluster API.
 icon: https://assets.unikorn-cloud.org/assets/images/logos/dark-on-light/icon.png
 name: cluster-api-core

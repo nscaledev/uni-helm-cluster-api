@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: v1.11.1
+appVersion: v1.11.5
 name: cluster-api
 description: A Helm chart to deploy Cluster API
 type: application

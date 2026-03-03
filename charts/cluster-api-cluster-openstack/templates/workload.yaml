@@ -129,8 +129,10 @@ spec:
         nodeRegistration:
           name: {{ "'{{ local_hostname }}'" }}
           kubeletExtraArgs:
-            cloud-provider: external
-            node-labels: {{- include "openstack.nodelabels.workload" $context | nindent 14 }}
+            - name: cloud-provider
+              value: external
+            - name: node-labels
+              value: "{{- include "openstack.nodelabels.workload" $context | nindent 14 }}"
           taints:
             {{- include "openstack.taints.workload" $ | nindent 10 }}
         {{- if $pool.kubelet }}

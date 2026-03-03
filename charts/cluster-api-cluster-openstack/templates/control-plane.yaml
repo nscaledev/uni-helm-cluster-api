@@ -12,10 +12,11 @@ spec:
   version: "{{ .Values.version }}"
   replicas: {{ .Values.controlPlane.replicas }}
   machineTemplate:
-    infrastructureRef:
-      kind: OpenStackMachineTemplate
-      apiGroup: infrastructure.cluster.x-k8s.io
-      name: {{ include "controlplane.openstackmachinetemplate.name" . }}
+    spec:
+      infrastructureRef:
+        kind: OpenStackMachineTemplate
+        apiGroup: infrastructure.cluster.x-k8s.io
+        name: {{ include "controlplane.openstackmachinetemplate.name" . }}
   kubeadmConfigSpec:
     initConfiguration:
       nodeRegistration:

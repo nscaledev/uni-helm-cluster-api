@@ -21,9 +21,9 @@ spec:
     # nodes that take an absolute age to POST.
     - type: Ready
       status: Unknown
-      timeoutSeconds: 45m0s
+      timeoutSeconds: 2700
     # Assuming this rolls up any other error...
     - type: Ready
       status: "False"
-      timeoutSeconds: 45m0s
+      timeoutSeconds: 2700
     # If the machine is shutdown for whatever reason, it looks like this

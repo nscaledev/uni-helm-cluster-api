@@ -17,7 +17,7 @@ spec:
       cluster.x-k8s.io/cluster-name: {{ include "cluster.name" . }}
   checks:
     # Note this is really relaxed because of ironic taking forever.
-    nodeStartupTimeout: 7200
+    nodeStartupTimeoutSeconds: 7200
     unhealthyNodeConditions:
       # usualy live-migration gone bad.  45m is a "safe" default for baremetal
     # nodes that take an absolute age to POST.

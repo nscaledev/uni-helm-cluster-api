@@ -15,14 +15,15 @@ spec:
   selector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: {{ include "cluster.name" . }}
-  unhealthyConditions:
-  # If the machine is shutdown for whatever reason, it looks like this
-  # usualy live-migration gone bad.  45m is a "safe" default for baremetal
-  # nodes that take an absolute age to POST.
-  - type: Ready
-    status: Unknown
-    timeout: 45m0s
-  # Assuming this rolls up any other error...
-  - type: Ready
-    status: "False"
-    timeout: 45m0s
+  checks:
+    unhealthyNodeConditions:
+      # usualy live-migration gone bad.  45m is a "safe" default for baremetal
+    # nodes that take an absolute age to POST.
+    - type: Ready
+      status: Unknown
+      timeoutSeconds: 45m0s
+    # Assuming this rolls up any other error...
+    - type: Ready
+      status: "False"
+      timeoutSeconds: 45m0s
+    # If the machine is shutdown for whatever reason, it looks like this

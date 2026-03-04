@@ -25,7 +25,7 @@ spec:
           - name: cloud-provider
             value: external
           - name: node-labels
-            value: "{{- include "openstack.nodelabels.control-plane" . | indent 12 }}"
+            value: "{{- include "openstack.nodelabels.control-plane" . }}"
         taints:
           {{- include "openstack.taints.control-plane" . | nindent 8 }}
       {{- if .Values.controlPlane.kubeadmSkipPhases }}
@@ -41,7 +41,7 @@ spec:
           - name: cloud-provider
             value: external
           - name: node-labels
-            value: "{{- include "openstack.nodelabels.control-plane" . | indent 12 }}"
+            value: "{{- include "openstack.nodelabels.control-plane" . }}"
         taints:
           {{- include "openstack.taints.control-plane" . | nindent 8 }}
       patches:

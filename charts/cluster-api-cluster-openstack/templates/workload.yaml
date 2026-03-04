@@ -132,7 +132,7 @@ spec:
             - name: cloud-provider
               value: external
             - name: node-labels
-              value: "{{- include "openstack.nodelabels.workload" $context | nindent 14 }}"
+              value: "{{- include "openstack.nodelabels.workload" $context }}"
           taints:
             {{- include "openstack.taints.workload" $ | nindent 10 }}
         {{- if $pool.kubelet }}

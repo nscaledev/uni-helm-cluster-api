@@ -2,11 +2,13 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.4
+    controller-gen.kubebuilder.io/version: v0.17.1
   name: images.openstack.k-orc.cloud
 spec:
   group: openstack.k-orc.cloud
   names:
+    categories:
+    - openstack
     kind: Image
     listKind: ImageList
     plural: images
@@ -22,14 +24,10 @@ spec:
       jsonPath: .status.conditions[?(@.type=='Available')].status
       name: Available
       type: string
-    - description: Message describing current availability status
-      jsonPath: .status.conditions[?(@.type=='Available')].message
+    - description: Message describing current progress status
+      jsonPath: .status.conditions[?(@.type=='Progressing')].message
       name: Message
       type: string
-    - description: Time duration since creation
-      jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -62,20 +60,20 @@ spec:
           metadata:
             type: object
           spec:
-            description: ImageSpec defines the desired state of an ORC object.
+            description: spec specifies the desired state of the resource.
             properties:
               cloudCredentialsRef:
-                description: CloudCredentialsRef points to a secret containing OpenStack
+                description: cloudCredentialsRef points to a secret containing OpenStack
                   credentials
                 properties:
                   cloudName:
-                    description: CloudName specifies the name of the entry in the
+                    description: cloudName specifies the name of the entry in the
                       clouds.yaml file to use.
                     maxLength: 256
                     minLength: 1
                     type: string
                   secretName:
-                    description: 'SecretName is the name of a secret in the same namespace
+                    description: 'secretName is the name of a secret in the same namespace
                       as the resource being provisioned.
 
                       The secret must contain a key named `clouds.yaml` which contains
@@ -91,7 +89,7 @@ spec:
                 - secretName
                 type: object
               import:
-                description: 'Import refers to an existing OpenStack resource which
+                description: 'import refers to an existing OpenStack resource which
                   will be imported instead of
 
                   creating a new one.'
@@ -99,7 +97,7 @@ spec:
                 minProperties: 1
                 properties:
                   filter:
-                    description: 'Filter contains a resource query which is expected
+                    description: 'filter contains a resource query which is expected
                       to return a single
 
                       result. The controller will continue to retry if filter returns
@@ -112,13 +110,32 @@ spec:
                     minProperties: 1
                     properties:
                       name:
-                        description: Name specifies the name of a Glance image
-                        maxLength: 1000
+                        description: name specifies the name of a Glance image
+                        maxLength: 255
                         minLength: 1
+                        pattern: ^[^,]+$
+                        type: string
+                      tags:
+                        description: tags is the list of tags on the resource.
+                        items:
+                          maxLength: 255
+                          minLength: 1
+                          type: string
+                        maxItems: 64
+                        type: array
+                        x-kubernetes-list-type: set
+                      visibility:
+                        description: visibility specifies the visibility of a Glance
+                          image.
+                        enum:
+                        - public
+                        - private
+                        - shared
+                        - community
                         type: string
                     type: object
                   id:
-                    description: 'ID contains the unique identifier of an existing
+                    description: 'id contains the unique identifier of an existing
                       OpenStack resource. Note
 
                       that when specifying an import by ID, the resource MUST already
@@ -130,12 +147,12 @@ spec:
                     type: string
                 type: object
               managedOptions:
-                description: ManagedOptions specifies options which may be applied
+                description: managedOptions specifies options which may be applied
                   to managed objects.
                 properties:
                   onDelete:
                     default: delete
-                    description: 'OnDelete specifies the behaviour of the controller
+                    description: 'onDelete specifies the behaviour of the controller
                       when the ORC
 
                       object is deleted. Options are `delete` - delete the OpenStack
@@ -152,7 +169,7 @@ spec:
                 type: object
               managementPolicy:
                 default: managed
-                description: 'ManagementPolicy defines how ORC will treat the object.
+                description: 'managementPolicy defines how ORC will treat the object.
                   Valid values are
 
                   `managed`: ORC will create, update, and delete the resource; `unmanaged`:
@@ -169,26 +186,26 @@ spec:
                 - message: managementPolicy is immutable
                   rule: self == oldSelf
               resource:
-                description: 'Resource specifies the desired state of the resource.
+                description: 'resource specifies the desired state of the resource.
 
 
-                  Resource may not be specified if the management policy is `unmanaged`.
+                  resource may not be specified if the management policy is `unmanaged`.
 
 
-                  Resource must be specified if the management policy is `managed`.'
+                  resource must be specified if the management policy is `managed`.'
                 properties:
                   content:
-                    description: Content specifies how to obtain the image content.
+                    description: content specifies how to obtain the image content.
                     properties:
                       containerFormat:
                         default: bare
-                        description: 'ContainerFormat is the format of the image container.
+                        description: 'containerFormat is the format of the image container.
 
                           qcow2 and raw images do not usually have a container. This
                           is specified as "bare", which is also the default.
 
-                          Permitted values are ami, ari, aki, bare, ovf, ova, and
-                          docker.'
+                          Permitted values are ami, ari, aki, bare, compressed, ovf,
+                          ova, and docker.'
                         enum:
                         - ami
                         - ari
@@ -197,9 +214,10 @@ spec:
                         - ovf
                         - ova
                         - docker
+                        - compressed
                         type: string
                       diskFormat:
-                        description: 'DiskFormat is the format of the disk image.
+                        description: 'diskFormat is the format of the disk image.
 
                           Normal values are "qcow2", or "raw". Glance may be configured
                           to support others.'
@@ -217,13 +235,13 @@ spec:
                         - iso
                         type: string
                       download:
-                        description: 'Download describes how to obtain image data
+                        description: 'download describes how to obtain image data
                           by downloading it from a URL.
 
                           Must be set when creating a managed image.'
                         properties:
                           decompress:
-                            description: 'Decompress specifies that the source data
+                            description: 'decompress specifies that the source data
                               must be decompressed with the
 
                               given compression algorithm before being stored. Specifying
@@ -239,7 +257,7 @@ spec:
                             - bz2
                             type: string
                           hash:
-                            description: 'Hash is a hash which will be used to verify
+                            description: 'hash is a hash which will be used to verify
                               downloaded data, i.e.
 
                               before any decompression. If not specified, no hash
@@ -254,7 +272,7 @@ spec:
                               the hash of downloaded content.'
                             properties:
                               algorithm:
-                                description: Algorithm is the hash algorithm used
+                                description: algorithm is the hash algorithm used
                                   to generate value.
                                 enum:
                                 - md5
@@ -263,7 +281,7 @@ spec:
                                 - sha512
                                 type: string
                               value:
-                                description: Value is the hash of the image data using
+                                description: value is the hash of the image data using
                                   Algorithm. It must be hex encoded using lowercase
                                   letters.
                                 maxLength: 1024
@@ -278,8 +296,9 @@ spec:
                             - message: hash is immutable
                               rule: self == oldSelf
                           url:
-                            description: URL containing image data
+                            description: url containing image data
                             format: uri
+                            maxLength: 2048
                             type: string
                         required:
                         - url
@@ -292,25 +311,61 @@ spec:
                     - message: content is immutable
                       rule: self == oldSelf
                   name:
-                    description: 'Name will be the name of the created Glance image.
+                    description: 'name will be the name of the created Glance image.
                       If not specified, the
 
                       name of the Image object will be used.'
-                    maxLength: 1024
+                    maxLength: 255
                     minLength: 1
+                    pattern: ^[^,]+$
                     type: string
                   properties:
-                    description: Properties is metadata available to consumers of
+                    description: properties is metadata available to consumers of
                       the image
                     properties:
+                      architecture:
+                        description: architecture is the CPU architecture that must
+                          be supported by the hypervisor.
+                        enum:
+                        - aarch64
+                        - alpha
+                        - armv7l
+                        - cris
+                        - i686
+                        - ia64
+                        - lm32
+                        - m68k
+                        - microblaze
+                        - microblazeel
+                        - mips
+                        - mipsel
+                        - mips64
+                        - mips64el
+                        - openrisc
+                        - parisc
+                        - parisc64
+                        - ppc
+                        - ppc64
+                        - ppcemb
+                        - s390
+                        - s390x
+                        - sh4
+                        - sh4eb
+                        - sparc
+                        - sparc64
+                        - unicore32
+                        - x86_64
+                        - xtensa
+                        - xtensaeb
+                        type: string
                       hardware:
-                        description: 'Hardware is a set of properties which control
+                        description: 'hardware is a set of properties which control
                           the virtual hardware
 
                           created by Nova.'
                         properties:
                           cdromBus:
-                            description: CDROMBus specifies the type of disk controller
+                            description: cdromBus specifies the type of disk controller
                               to attach CD-ROM devices to.
                             enum:
                             - scsi
@@ -322,11 +377,13 @@ spec:
                             - lxc
                             type: string
                           cpuCores:
-                            description: CPUCores is the preferred number of cores
+                            description: cpuCores is the preferred number of cores
                               to expose to the guest
+                            format: int32
+                            minimum: 1
                             type: integer
                           cpuPolicy:
-                            description: 'CPUPolicy is used to pin the virtual CPUs
+                            description: 'cpuPolicy is used to pin the virtual CPUs
                               (vCPUs) of instances to the
 
                               host''s physical CPU cores (pCPUs). Host aggregates
@@ -378,11 +435,13 @@ spec:
                             - dedicated
                             type: string
                           cpuSockets:
-                            description: CPUSockets is the preferred number of sockets
+                            description: cpuSockets is the preferred number of sockets
                               to expose to the guest
+                            format: int32
+                            minimum: 1
                             type: integer
                           cpuThreadPolicy:
-                            description: 'CPUThreadPolicy further refines a CPUPolicy
+                            description: 'cpuThreadPolicy further refines a CPUPolicy
                               of ''dedicated'' by stating
 
                               how hardware CPU threads in a simultaneous multithreading-based
@@ -459,11 +518,13 @@ spec:
                             - require
                             type: string
                           cpuThreads:
-                            description: CPUThreads is the preferred number of threads
+                            description: cpuThreads is the preferred number of threads
                               to expose to the guest
+                            format: int32
+                            minimum: 1
                             type: integer
                           diskBus:
-                            description: DiskBus specifies the type of disk controller
+                            description: diskBus specifies the type of disk controller
                               to attach disk devices to.
                             enum:
                             - scsi
@@ -474,8 +535,19 @@ spec:
                             - usb
                             - lxc
                             type: string
+                          qemuGuestAgent:
+                            description: qemuGuestAgent enables QEMU guest agent.
+                            type: boolean
+                          rngModel:
+                            description: "rngModel adds a random-number generator\
+                              \ device to the image\u2019s instances.\nThis image\
+                              \ property by itself does not guarantee that a hardware\
+                              \ RNG will be used;\nit expresses a preference that\
+                              \ may or may not be satisfied depending upon Nova configuration."
+                            maxLength: 255
+                            type: string
                           scsiModel:
-                            description: 'SCSIModel enables the use of VirtIO SCSI
+                            description: 'scsiModel enables the use of VirtIO SCSI
                               (virtio-scsi) to provide
 
                               block device access for compute instances; by default,
@@ -495,7 +567,7 @@ spec:
                             - virtio-scsi
                             type: string
                           vifModel:
-                            description: 'VIFModel specifies the model of virtual
+                            description: 'vifModel specifies the model of virtual
                               network interface device to use.
 
 
@@ -513,58 +585,95 @@ spec:
                             - vmxnet3
                             type: string
                         type: object
+                      hypervisorType:
+                        description: hypervisorType is the hypervisor type
+                        enum:
+                        - hyperv
+                        - ironic
+                        - lxc
+                        - qemu
+                        - uml
+                        - vmware
+                        - xen
+                        type: string
                       minDiskGB:
-                        description: MinDisk is the minimum amount of disk space in
-                          GB that is required to boot the image
+                        description: minDiskGB is the minimum amount of disk space
+                          in GB that is required to boot the image
+                        format: int32
                         minimum: 1
                         type: integer
                       minMemoryMB:
-                        description: MinMemoryMB is the minimum amount of RAM in MB
+                        description: minMemoryMB is the minimum amount of RAM in MB
                           that is required to boot the image.
+                        format: int32
                         minimum: 1
                         type: integer
+                      operatingSystem:
+                        description: 'operatingSystem is a set of properties that
+                          specify and influence the behavior
+
+                          of the operating system within the virtual machine.'
+                        properties:
+                          distro:
+                            description: distro is the common name of the operating
+                              system distribution in lowercase.
+                            enum:
+                            - arch
+                            - centos
+                            - debian
+                            - fedora
+                            - freebsd
+                            - gentoo
+                            - mandrake
+                            - mandriva
+                            - mes
+                            - msdos
+                            - netbsd
+                            - netware
+                            - openbsd
+                            - opensolaris
+                            - opensuse
+                            - rocky
+                            - rhel
+                            - sled
+                            - ubuntu
+                            - windows
+                            type: string
+                          version:
+                            description: version is the operating system version as
+                              specified by the distributor.
+                            maxLength: 255
+                            type: string
+                        type: object
                     type: object
+                    x-kubernetes-validations:
+                    - message: properties is immutable
+                      rule: self == oldSelf
                   protected:
-                    description: 'Protected specifies that the image is protected
+                    description: 'protected specifies that the image is protected
                       from deletion.
 
                       If not specified, the default is false.'
                     type: boolean
                   tags:
-                    description: Tags is a list of tags which will be applied to the
+                    description: tags is a list of tags which will be applied to the
                       image. A tag has a maximum length of 255 characters.
                     items:
                       maxLength: 255
                       minLength: 1
                       type: string
+                    maxItems: 64
                     type: array
                     x-kubernetes-list-type: set
                   visibility:
-                    description: Visibility of the image
+                    description: visibility of the image
                     enum:
                     - public
                     - private
                     - shared
                     - community
                     type: string
-                    x-kubernetes-validations:
-                    - message: visibility is immutable
-                      rule: self == oldSelf
                 type: object
-                x-kubernetes-validations:
-                - message: name is immutable
-                  rule: 'has(self.name) ? self.name == oldSelf.name : !has(oldSelf.name)'
-                - message: name is immutable
-                  rule: 'has(self.protected) ? self.protected == oldSelf.protected
-                    : !has(oldSelf.protected)'
-                - message: tags is immutable
-                  rule: 'has(self.tags) ? self.tags == oldSelf.tags : !has(oldSelf.tags)'
-                - message: visibility is immutable
-                  rule: 'has(self.visibility) ? self.visibility == oldSelf.visibility
-                    : !has(oldSelf.visibility)'
-                - message: properties is immutable
-                  rule: 'has(self.properties) ? self.properties == oldSelf.properties
-                    : !has(oldSelf.properties)'
             required:
             - cloudCredentialsRef
             type: object
@@ -586,10 +695,10 @@ spec:
             - message: resource content must be specified when not importing
               rule: '!has(self.__import__) ? has(self.resource.content) : true'
           status:
-            description: ImageStatus defines the observed state of an ORC resource.
+            description: status defines the observed state of the resource.
             properties:
               conditions:
-                description: 'Conditions represents the observed status of the object.
+                description: 'conditions represents the observed status of the object.
 
                   Known .status.conditions.type are: "Available", "Progressing"
 
@@ -685,23 +794,25 @@ spec:
                   - status
                   - type
                   type: object
+                maxItems: 32
                 type: array
                 x-kubernetes-list-map-keys:
                 - type
                 x-kubernetes-list-type: map
               downloadAttempts:
-                description: DownloadAttempts is the number of times the controller
+                description: downloadAttempts is the number of times the controller
                   has attempted to download the image contents
+                format: int32
                 type: integer
               id:
-                description: ID is the unique identifier of the OpenStack resource.
+                description: id is the unique identifier of the OpenStack resource.
                 type: string
               resource:
-                description: Resource contains the observed state of the OpenStack
+                description: resource contains the observed state of the OpenStack
                   resource.
                 properties:
                   hash:
-                    description: 'Hash is the hash of the image data published by
+                    description: 'hash is the hash of the image data published by
                       Glance. Note that this is
 
                       a hash of the data stored internally by Glance, which will have
@@ -715,7 +826,7 @@ spec:
                       hash will usually differ from the download hash.'
                     properties:
                       algorithm:
-                        description: Algorithm is the hash algorithm used to generate
+                        description: algorithm is the hash algorithm used to generate
                           value.
                         enum:
                         - md5
@@ -724,7 +835,7 @@ spec:
                         - sha512
                         type: string
                       value:
-                        description: Value is the hash of the image data using Algorithm.
+                        description: value is the hash of the image data using Algorithm.
                           It must be hex encoded using lowercase letters.
                         maxLength: 1024
                         minLength: 1
@@ -734,18 +845,40 @@ spec:
                     - algorithm
                     - value
                     type: object
+                  name:
+                    description: name is a Human-readable name for the image. Might
+                      not be unique.
+                    maxLength: 1024
+                    type: string
+                  protected:
+                    description: protected specifies that the image is protected from
+                      deletion.
+                    type: boolean
                   sizeB:
-                    description: SizeB is the size of the image data, in bytes
+                    description: sizeB is the size of the image data, in bytes
                     format: int64
                     type: integer
                   status:
-                    description: Status is the image status as reported by Glance
+                    description: status is the image status as reported by Glance
+                    maxLength: 1024
                     type: string
+                  tags:
+                    description: tags is the list of tags on the resource.
+                    items:
+                      maxLength: 1024
+                      type: string
+                    maxItems: 64
+                    type: array
+                    x-kubernetes-list-type: atomic
                   virtualSizeB:
-                    description: VirtualSizeB is the size of the disk the image data
+                    description: virtualSizeB is the size of the disk the image data
                       represents, in bytes
                     format: int64
                     type: integer
+                  visibility:
+                    description: visibility of the image
+                    maxLength: 1024
+                    type: string
                 type: object
             type: object
         type: object

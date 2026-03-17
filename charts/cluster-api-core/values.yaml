@@ -7,4 +7,4 @@ exp_machine_set_preflight_checks: true
 exp_machine_waitforvolumedetach_consider_volumeattachments: true
 exp_priority_queue: false
 exp_runtime_sdk: false
-image: registry.k8s.io/cluster-api/cluster-api-controller:v1.10.4
+image: registry.k8s.io/cluster-api/cluster-api-controller:v1.11.5

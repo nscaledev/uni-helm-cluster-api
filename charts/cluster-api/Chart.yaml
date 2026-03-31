@@ -3,25 +3,25 @@ appVersion: v1.11.7
 name: cluster-api
 description: A Helm chart to deploy Cluster API
 type: application
-version: 0.2.7
+version: v0.2.7
 icon: https://assets.unikorn-cloud.org/assets/images/logos/dark-on-light/icon.png
 
 dependencies:
 - name: cluster-api-core
-  version: 0.2.7
+  version: v0.2.7
   repository: file://../cluster-api-core
 - name: cluster-api-bootstrap-kubeadm
-  version: 0.2.7
+  version: v0.2.7
   repository: file://../cluster-api-bootstrap-kubeadm
   condition: kubeadm.enabled
 - name: cluster-api-control-plane-kubeadm
-  version: 0.2.7
+  version: v0.2.7
   repository: file://../cluster-api-control-plane-kubeadm
   condition: kubeadm.enabled
 - name: cluster-api-provider-openstack
-  version: 0.2.7
+  version: v0.2.7
   repository: file://../cluster-api-provider-openstack
   condition: openstack.enabled
 - name: openstack-resource-controller
-  version: 0.2.7
+  version: v0.2.7
   repository: file://../openstack-resource-controller

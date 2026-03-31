@@ -4,4 +4,4 @@ description: A Helm chart for deploying cluster API.
 icon: https://assets.unikorn-cloud.org/assets/images/logos/dark-on-light/icon.png
 name: cluster-api-core
 type: application
-version: 0.2.7
+version: v0.2.7

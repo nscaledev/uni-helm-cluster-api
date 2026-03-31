@@ -8,7 +8,7 @@
 ```shell
 helm repo add unikorn-cloud-capi https://unikorn-cloud.github.io/helm-cluster-api
 helm repo update
-helm upgrade --install cluster-api-provider-openstack unikorn-cloud-capi/cluster-api-provider-openstack -n cluster-api --create-namespace --version v0.2.7
+helm upgrade --install cluster-api-provider-openstack unikorn-cloud-capi/cluster-api-provider-openstack -n cluster-api --create-namespace --version 0.2.7
 ```
 </details>
 
@@ -28,7 +28,7 @@ spec:
   source:
     repoURL: https://unikorn-cloud.github.io/helm-cluster-api
     chart: cluster-api-provider-openstack
-    targetRevision: v0.2.7
+    targetRevision: 0.2.7
   destination:
     server: https://kubernetes.default.svc
     namespace: cluster-api

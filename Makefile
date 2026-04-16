@@ -1,12 +1,12 @@
 # Update this for every tagged release.
-CHART_VERSION = v0.2.6
+CHART_VERSION = 0.2.7
 
 # Defines the versions to use for cluster API components.
-CAPI_VERSION = v1.10.4
-CAPO_VERSION = v0.12.4
+CAPI_VERSION = v1.11.7
+CAPO_VERSION = v0.13.5
 
 # CAPO requires ORC.
-ORC_VERSION = v1.0.0
+ORC_VERSION = v1.0.2
 
 # All the charts we can generate.
 CHARTS = cluster-api-core \

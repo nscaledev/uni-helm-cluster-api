@@ -13,7 +13,7 @@ The resource names are common all over the place, so define in a canonical locat
 {{- $pool_name := printf "%s-pool-%s" $.Release.Name ( $name | sha256sum | trunc 8 ) }}
 {{- $pool_name_discriminated := printf "%s-pool-%s-%s"  $.Release.Name ( $name | sha256sum | trunc 8 ) ( include "openstack.discriminator.workload" $context ) }}
 ---
-apiVersion: cluster.x-k8s.io/v1beta1
+apiVersion: cluster.x-k8s.io/v1beta2
 kind: MachineDeployment
 metadata:
   name: {{ $pool_name }}
@@ -39,11 +39,11 @@ spec:
       bootstrap:
         configRef:
           name: {{ $pool_name_discriminated }}
-          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          apiGroup: bootstrap.cluster.x-k8s.io
           kind: KubeadmConfigTemplate
       infrastructureRef:
         name: {{ $pool_name_discriminated }}
-        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        apiGroup: infrastructure.cluster.x-k8s.io
         kind: OpenStackMachineTemplate
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
@@ -86,7 +86,7 @@ spec:
         {{- end }}
       {{- end }}
 ---
-apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta2
 kind: KubeadmConfigTemplate
 metadata:
   name: {{ $pool_name_discriminated }}
@@ -129,8 +129,10 @@ spec:
         nodeRegistration:
           name: {{ "'{{ local_hostname }}'" }}
           kubeletExtraArgs:
-            cloud-provider: external
-            node-labels: {{- include "openstack.nodelabels.workload" $context | nindent 14 }}
+            - name: cloud-provider
+              value: external
+            - name: node-labels
+              value: "{{- include "openstack.nodelabels.workload" $context }}"
           taints:
             {{- include "openstack.taints.workload" $ | nindent 10 }}
         {{- if $pool.kubelet }}

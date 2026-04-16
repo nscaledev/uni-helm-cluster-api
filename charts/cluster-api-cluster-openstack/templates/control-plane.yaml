@@ -1,6 +1,6 @@
 ---
 kind: KubeadmControlPlane
-apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+apiVersion: controlplane.cluster.x-k8s.io/v1beta2
 metadata:
   name: {{ .Release.Name }}
   labels:
@@ -12,17 +12,20 @@ spec:
   version: "{{ .Values.version }}"
   replicas: {{ .Values.controlPlane.replicas }}
   machineTemplate:
-    infrastructureRef:
-      kind: OpenStackMachineTemplate
-      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
-      name: {{ include "controlplane.openstackmachinetemplate.name" . }}
+    spec:
+      infrastructureRef:
+        kind: OpenStackMachineTemplate
+        apiGroup: infrastructure.cluster.x-k8s.io
+        name: {{ include "controlplane.openstackmachinetemplate.name" . }}
   kubeadmConfigSpec:
     initConfiguration:
       nodeRegistration:
         name: {{ "'{{ local_hostname }}'" }}
         kubeletExtraArgs:
-          cloud-provider: external
-          node-labels: {{- include "openstack.nodelabels.control-plane" . | nindent 12 }}
+          - name: cloud-provider
+            value: external
+          - name: node-labels
+            value: "{{- include "openstack.nodelabels.control-plane" . }}"
         taints:
           {{- include "openstack.taints.control-plane" . | nindent 8 }}
       {{- if .Values.controlPlane.kubeadmSkipPhases }}
@@ -35,8 +38,10 @@ spec:
       nodeRegistration:
         name: {{ "'{{ local_hostname }}'" }}
         kubeletExtraArgs:
-          cloud-provider: external
-          node-labels: {{- include "openstack.nodelabels.control-plane" . | nindent 12 }}
+          - name: cloud-provider
+            value: external
+          - name: node-labels
+            value: "{{- include "openstack.nodelabels.control-plane" . }}"
         taints:
           {{- include "openstack.taints.control-plane" . | nindent 8 }}
       patches:
@@ -57,16 +62,21 @@ spec:
         {{- end }}
       controllerManager:
         extraArgs:
-          cloud-provider: external
-          bind-address: "0.0.0.0"
+          - name: cloud-provider
+            value: external
+          - name: bind-address
+            value: "0.0.0.0"
       etcd:
         local:
           extraArgs:
-            listen-metrics-urls: "http://0.0.0.0:2381"
+            - name: listen-metrics-urls
+              value: "http://0.0.0.0:2381"
       scheduler:
         extraArgs:
-          authorization-always-allow-paths: "/healthz,/readyz,/livez,/metrics"
-          bind-address: "0.0.0.0"
+          - name: authorization-always-allow-paths
+            value: "/healthz,/readyz,/livez,/metrics"
+          - name: bind-address
+            value: "0.0.0.0"
     files:
     {{- range $kubeadmPatch, $_ :=  .Files.Glob  "files/patches/**" }}
     - path: {{ (printf "/tmp/kubeadm/patches/%s" (base $kubeadmPatch)) }}

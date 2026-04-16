@@ -1,7 +1,7 @@
 apiVersion: v2
-appVersion: v1.10.4
+appVersion: v1.11.7
 description: A Helm chart for deploying cluster API.
 icon: https://assets.unikorn-cloud.org/assets/images/logos/dark-on-light/icon.png
 name: cluster-api-bootstrap-kubeadm
 type: application
-version: v0.2.6
+version: 0.2.7

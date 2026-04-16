@@ -1,5 +1,5 @@
 # Update this for every tagged release.
-CHART_VERSION = 0.2.7
+CHART_VERSION = 0.3.0
 
 # Defines the versions to use for cluster API components.
 CAPI_VERSION = v1.11.7

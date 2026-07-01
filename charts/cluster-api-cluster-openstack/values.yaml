@@ -29,6 +29,11 @@ openstack:
   # it will error.
   # externalNetworkID: b19ce45a-3278-48e4-8a0e-83100af68778
 
+  # Disable use of an external network
+  # must be set to true if externalNetworkID is empty and there are either
+  # no external networks or more than one available
+  disableExternalNetwork: false
+
   # SSH key.
   #
   # sshKeyName: foo

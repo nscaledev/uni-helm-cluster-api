@@ -70,6 +70,9 @@ spec:
   externalNetwork:
     id: {{ $net }}
   {{- end }}
+  {{- if .Values.openstack.disableExternalNetwork }}
+  disableExternalNetwork: true
+  {{- end }}
 {{- if not .Values.openstack.cloudConfigSecret }}
 ---
 apiVersion: v1

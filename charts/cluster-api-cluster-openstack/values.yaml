@@ -34,6 +34,11 @@ openstack:
   # no external networks or more than one available
   disableExternalNetwork: false
 
+  # Network MTU
+  # This value will be used only if the Cluster controller creates the network
+  # without which it will use the openstack network default
+  networkMTU: ~
+
   # SSH key.
   #
   # sshKeyName: foo

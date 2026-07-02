@@ -70,6 +70,9 @@ spec:
   externalNetwork:
     id: {{ $net }}
   {{- end }}
+  {{- with .Values.openstack.networkMTU }}
+  networkMTU: {{ . }}
+  {{- end }}
   {{- if .Values.openstack.disableExternalNetwork }}
   disableExternalNetwork: true
   {{- end }}

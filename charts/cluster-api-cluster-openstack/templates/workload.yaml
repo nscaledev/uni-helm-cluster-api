@@ -99,6 +99,7 @@ metadata:
 spec:
   template:
     spec:
+      {{- if or $pool.files $pool.kubelet $.Values.registryMirrors }}
       files:
       {{- range $file := $pool.files }}
       - content: {{ $file.content }}
@@ -123,6 +124,7 @@ spec:
         permissions: "0644"
         content: |
           {{- include "containerd.registry.content" (list $registry $mirrors) | nindent 10 }}
+      {{- end }}
       {{- end }}
       {{- end }}
       joinConfiguration:

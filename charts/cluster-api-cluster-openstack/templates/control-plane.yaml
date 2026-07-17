@@ -127,7 +127,8 @@ spec:
         cloudName: {{ .Values.openstack.cloud }}
       {{- if .Values.controlPlane.machine.disk }}
       rootVolume:
-        availabilityZone: {{ .Values.openstack.volumeFailureDomain }}
+        availabilityZone:
+          name: {{ .Values.openstack.volumeFailureDomain }}
         sizeGiB: {{ .Values.controlPlane.machine.disk.size }}
       {{- end }}
       {{- with $cluster := .Values.cluster -}}

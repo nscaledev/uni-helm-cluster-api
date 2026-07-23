@@ -45,7 +45,7 @@ openstack:
 
   # If volumes are defined for machine sets, this is the global default.
   # It can be overidden on a per-workload pool/control plane basis.
-  # volumeFailureDomain: nova
+  volumeFailureDomain: nova
 
 # Cluster wide configuration.
 #

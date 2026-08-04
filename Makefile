@@ -1,8 +1,8 @@
 # Update this for every tagged release.
-CHART_VERSION = 0.3.0
+CHART_VERSION = 0.4.0
 
 # Defines the versions to use for cluster API components.
-CAPI_VERSION = v1.11.7
+CAPI_VERSION = v1.13.4
 CAPO_VERSION = v0.13.5
 
 # CAPO requires ORC.
@@ -58,6 +58,7 @@ test:
 		helm lint --strict charts/$${chart}; \
 		helm template charts/$${chart} > /dev/null; \
 	done
+	./verify-generated.py --chart-version $(CHART_VERSION) --capi-version $(CAPI_VERSION) --capo-version $(CAPO_VERSION) --orc-version $(ORC_VERSION)
 
 .PHONY: docs
 docs:

@@ -14,13 +14,18 @@ import yaml
 VALUES = {
   # Allow access to metrics endpoints without authentication
   "capi_diagnostics_address": ":8080",
-  "capi_insecure_diagnostics":  "true"
+  "capi_insecure_diagnostics":  "true",
+  # Keep the required CAPI feature gates enabled across regeneration.
+  "exp_machine_set_preflight_checks": "true",
+  "exp_machine_taint_propagation": "true",
 }
 
 STRING_CONVERSIONS = {
   "true": True,
   "false": False,
 }
+
+MANAGEMENT_KUBERNETES_VERSION = ">=1.32.0-0 <1.37.0-0"
 
 def main():
     parser = argparse.ArgumentParser()
@@ -52,6 +57,7 @@ def main():
         'type': 'application',
         'version': args.version,
         'appVersion': args.app_version,
+        'kubeVersion': MANAGEMENT_KUBERNETES_VERSION,
         'icon': 'https://assets.unikorn-cloud.org/assets/images/logos/dark-on-light/icon.png',
     }
 

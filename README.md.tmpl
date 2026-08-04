@@ -16,6 +16,32 @@ This chart requires the following to be installed on the target cluster first:
 
 * [Jetstack cert-manager](https://cert-manager.io/)
 
+The management cluster must run Kubernetes v1.32-v1.36. Workload clusters running
+Kubernetes v1.30-v1.36 are supported.
+
+## Upgrading to Chart 0.4.0
+
+Chart 0.4.0 upgrades the core, kubeadm bootstrap, and kubeadm control-plane
+controllers to Cluster API v1.13.4. CAPO remains at v0.13.5 and ORC remains at
+v1.0.2.
+
+Before upgrading:
+
+* Back up the management cluster and use a canary where possible; Cluster API
+  downgrades are not supported.
+* Verify existing Cluster API resources are healthy and no cluster rollout or
+  deletion is active.
+* Inspect `status.storedVersions` on the CAPI, CABPK, and KCP CRDs. Migrate any
+  objects still stored as `v1alpha3` or `v1alpha4` before applying the new CRDs.
+* Apply the regenerated CRDs before upgrading the controller deployments. Helm
+  does not upgrade CRDs placed in a chart's `crds/` directory.
+
+After upgrading, monitor the three CAPI controller deployments and the health of
+Cluster, KubeadmControlPlane, MachineDeployment, Machine, and OpenStackMachine
+resources. No workload Kubernetes upgrade or machine replacement is expected;
+stop the rollout if rendered specification changes would create replacement
+machines.
+
 ## Deploying One-Shot
 
 There is a top level chart-of-charts that will just install everything as a big bang operation.

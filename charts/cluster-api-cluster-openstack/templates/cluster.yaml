@@ -75,8 +75,7 @@ spec:
   {{- end }}
   {{- if .Values.openstack.disableExternalNetwork }}
   disableExternalNetwork: true
-  apiServerLoadBalancer:
-    enabled: true
+  disableAPIServerFloatingIP: true
   {{- end }}
 {{- if not .Values.openstack.cloudConfigSecret }}
 ---

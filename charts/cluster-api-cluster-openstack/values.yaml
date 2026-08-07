@@ -245,9 +245,11 @@ network:
   # will be created by CAPO.  This allows you to use non-standard network
   # types e.g. a VLAN to be used for baremetal nodes. The subnet must have a
   # router attached.
+  # Can also specify a list of subnets instead
   # provider:
   #   networkID: 8f526b54-fab3-435d-b4b3-f65fd8474b8a
   #   subnetID: e3b15dd0-17e4-47c0-bc6c-1b8ea1f1018f
+  #   ipv6SubnetID: c2596889-9245-11f1-b2be-88f4dae84608
 
   # If specified these security group rules are added to all nodes.
   # securityGroupRules:

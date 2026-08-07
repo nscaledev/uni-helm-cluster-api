@@ -61,6 +61,9 @@ spec:
     id: {{ .Values.network.provider.networkID }}
   subnets:
   - id: {{ .Values.network.provider.subnetID }}
+  {{- with .Values.network.provider.ipv6SubnetID }}
+  - id: {{ . }}
+  {{- end }}
   {{- else }}
   managedSubnets:
   - cidr: {{ .Values.network.nodeCIDR }}

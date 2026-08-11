@@ -2,6 +2,7 @@ capi_diagnostics_address: :8080
 capi_insecure_diagnostics: true
 exp_kubeadm_bootstrap_format_ignition: false
 exp_machine_pool: true
-exp_priority_queue: false
-image: registry.k8s.io/cluster-api/kubeadm-bootstrap-controller:v1.11.7
+exp_priority_queue: true
+exp_reconciler_rate_limiting: true
+image: registry.k8s.io/cluster-api/kubeadm-bootstrap-controller:v1.13.4
 kubeadm_bootstrap_token_ttl: 15m

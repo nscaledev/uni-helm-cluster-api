@@ -23,7 +23,7 @@ spec:
         - --leader-elect
         - --diagnostics-address={{ .Values.capi_diagnostics_address }}
         - --insecure-diagnostics={{ .Values.capi_insecure_diagnostics }}
-        - --feature-gates=MachinePool={{ .Values.exp_machine_pool }},ClusterTopology={{ .Values.cluster_topology }},KubeadmBootstrapFormatIgnition={{ .Values.exp_kubeadm_bootstrap_format_ignition }},PriorityQueue={{ .Values.exp_priority_queue }}
+        - --feature-gates=MachinePool={{ .Values.exp_machine_pool }},ClusterTopology={{ .Values.cluster_topology }},KubeadmBootstrapFormatIgnition={{ .Values.exp_kubeadm_bootstrap_format_ignition }},PriorityQueue={{ .Values.exp_priority_queue }},ReconcilerRateLimiting={{ .Values.exp_reconciler_rate_limiting }},InPlaceUpdates={{ .Values.exp_in_place_updates }},MachineTaintPropagation={{ .Values.exp_machine_taint_propagation }}
         - --logging-format=json
         command:
         - /manager

@@ -1,7 +1,8 @@
 apiVersion: v2
-appVersion: v0.13.5
+appVersion: v0.13.9
 description: A Helm chart for deploying cluster API.
 icon: https://assets.unikorn-cloud.org/assets/images/logos/dark-on-light/icon.png
+kubeVersion: '>=1.32.0-0 <1.37.0-0'
 name: cluster-api-provider-openstack
 type: application
-version: 0.3.0
+version: 0.4.0

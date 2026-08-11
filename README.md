@@ -18,6 +18,36 @@ This chart requires the following to be installed on the target cluster first:
 
 * [Jetstack cert-manager](https://cert-manager.io/)
 
+The management cluster must run Kubernetes v1.32-v1.36. Workload clusters running
+Kubernetes v1.30-v1.36 are supported.
+
+## Upgrading to Chart 0.4.0
+
+Chart 0.4.0 upgrades the core, kubeadm bootstrap, and kubeadm control-plane
+controllers to Cluster API v1.13.4, CAPO to v0.13.9, and ORC to v2.6.0.
+
+Before upgrading:
+
+* Back up the management cluster and use a canary where possible; Cluster API
+  downgrades are not supported.
+* Verify existing Cluster API resources are healthy and no cluster rollout or
+  deletion is active.
+* Inspect `status.storedVersions` on the CAPI, CABPK, and KCP CRDs. Migrate any
+  objects still stored as `v1alpha3` or `v1alpha4` before applying the new CRDs.
+* Inventory any existing ORC custom resources, including `Image` objects. ORC
+  does not automatically adopt existing OpenStack or CAPO-managed resources, so
+  upgrading does not change ownership of anything already running.
+* Apply the regenerated CRDs before upgrading the controller deployments. Helm
+  does not upgrade CRDs placed in a chart's `crds/` directory. This applies to
+  the ORC CRDs too: ORC v2.6.0 introduces 23 new resource CRDs alongside
+  `Image`, and they must exist before the ORC controller is rolled.
+
+After upgrading, monitor the three CAPI controller deployments, the ORC
+controller deployment, and the health of Cluster, KubeadmControlPlane,
+MachineDeployment, Machine, and OpenStackMachine resources. No workload
+Kubernetes upgrade or machine replacement is expected; stop the rollout if
+rendered specification changes would create replacement machines.
+
 ## Deploying One-Shot
 
 There is a top level chart-of-charts that will just install everything as a big bang operation.
@@ -28,7 +58,7 @@ There is a top level chart-of-charts that will just install everything as a big 
 ```shell
 helm repo add unikorn-cloud-capi https://unikorn-cloud.github.io/helm-cluster-api
 helm repo update
-helm upgrade --install cluster-api unikorn-cloud-capi/cluster-api -n cluster-api --create-namespace --version 0.3.0
+helm upgrade --install cluster-api unikorn-cloud-capi/cluster-api -n cluster-api --create-namespace --version 0.4.0
 ```
 </details>
 
@@ -47,7 +77,7 @@ spec:
   source:
     repoURL: https://unikorn-cloud.github.io/helm-cluster-api
     chart: cluster-api
-    targetRevision: 0.3.0
+    targetRevision: 0.4.0
   destination:
     server: https://kubernetes.default.svc
     namespace: cluster-api
@@ -89,7 +119,7 @@ You may want to be a little less gung-ho and deploy the pieces as separate appli
 ```shell
 helm repo add unikorn-cloud-capi https://unikorn-cloud.github.io/helm-cluster-api
 helm repo update
-helm upgrade --install cluster-api-core unikorn-cloud-capi/cluster-api-core -n cluster-api --create-namespace --version 0.3.0
+helm upgrade --install cluster-api-core unikorn-cloud-capi/cluster-api-core -n cluster-api --create-namespace --version 0.4.0
 ```
 </details>
 
@@ -108,7 +138,7 @@ spec:
   source:
     repoURL: https://unikorn-cloud.github.io/helm-cluster-api
     chart: cluster-api-core
-    targetRevision: 0.3.0
+    targetRevision: 0.4.0
   destination:
     server: https://kubernetes.default.svc
     namespace: cluster-api
@@ -141,7 +171,7 @@ spec:
 ```shell
 helm repo add unikorn-cloud-capi https://unikorn-cloud.github.io/helm-cluster-api
 helm repo update
-helm upgrade --install cluster-api-bootstrap-kubeadm unikorn-cloud-capi/cluster-api-bootstrap-kubeadm -n cluster-api --create-namespace --version 0.3.0
+helm upgrade --install cluster-api-bootstrap-kubeadm unikorn-cloud-capi/cluster-api-bootstrap-kubeadm -n cluster-api --create-namespace --version 0.4.0
 ```
 </details>
 
@@ -160,7 +190,7 @@ spec:
   source:
     repoURL: https://unikorn-cloud.github.io/helm-cluster-api
     chart: cluster-api-bootstrap-kubeadm
-    targetRevision: 0.3.0
+    targetRevision: 0.4.0
   destination:
     server: https://kubernetes.default.svc
     namespace: cluster-api
@@ -186,7 +216,7 @@ spec:
 ```shell
 helm repo add unikorn-cloud-capi https://unikorn-cloud.github.io/helm-cluster-api
 helm repo update
-helm upgrade --install cluster-api-control-plane-kubeadm unikorn-cloud-capi/cluster-api-control-plane-kubeadm -n cluster-api --create-namespace --version 0.3.0
+helm upgrade --install cluster-api-control-plane-kubeadm unikorn-cloud-capi/cluster-api-control-plane-kubeadm -n cluster-api --create-namespace --version 0.4.0
 ```
 </details>
 
@@ -205,7 +235,7 @@ spec:
   source:
     repoURL: https://unikorn-cloud.github.io/helm-cluster-api
     chart: cluster-api-control-plane-kubeadm
-    targetRevision: 0.3.0
+    targetRevision: 0.4.0
   destination:
     server: https://kubernetes.default.svc
     namespace: cluster-api

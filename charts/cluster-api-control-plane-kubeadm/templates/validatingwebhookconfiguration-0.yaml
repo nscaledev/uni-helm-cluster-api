@@ -9,7 +9,6 @@ metadata:
 webhooks:
 - admissionReviewVersions:
   - v1
-  - v1beta1
   clientConfig:
     service:
       name: capi-kubeadm-control-plane-webhook-service
@@ -30,7 +29,6 @@ webhooks:
   sideEffects: None
 - admissionReviewVersions:
   - v1
-  - v1beta1
   clientConfig:
     service:
       name: capi-kubeadm-control-plane-webhook-service
@@ -52,7 +50,6 @@ webhooks:
   sideEffects: None
 - admissionReviewVersions:
   - v1
-  - v1beta1
   clientConfig:
     service:
       name: capi-kubeadm-control-plane-webhook-service

@@ -4,6 +4,8 @@ import argparse
 import re
 import sys
 
+MANAGEMENT_KUBERNETES_VERSION = ">=1.32.0-0 <1.37.0-0"
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--version', help="Chart version")
@@ -31,6 +33,7 @@ def main():
     with open(f'charts/cluster-api/Chart.yaml', 'w') as file:
         file.write("apiVersion: v2\n")
         file.write(f"appVersion: {args.capi_version}\n")
+        file.write(f"kubeVersion: '{MANAGEMENT_KUBERNETES_VERSION}'\n")
         file.write("name: cluster-api\n")
         file.write("description: A Helm chart to deploy Cluster API\n")
         file.write("type: application\n")

@@ -22,6 +22,37 @@ CAPI_CRD_DIRECTORIES = (
     pathlib.Path("charts/cluster-api-control-plane-kubeadm/crds"),
 )
 
+ORC_CRD_DIRECTORY = pathlib.Path("charts/openstack-resource-controller/crds")
+
+ORC_CRD_NAMES = frozenset({
+    "addressscopes.openstack.k-orc.cloud",
+    "applicationcredentials.openstack.k-orc.cloud",
+    "domains.openstack.k-orc.cloud",
+    "endpoints.openstack.k-orc.cloud",
+    "flavors.openstack.k-orc.cloud",
+    "floatingips.openstack.k-orc.cloud",
+    "groups.openstack.k-orc.cloud",
+    "images.openstack.k-orc.cloud",
+    "keypairs.openstack.k-orc.cloud",
+    "networks.openstack.k-orc.cloud",
+    "ports.openstack.k-orc.cloud",
+    "projects.openstack.k-orc.cloud",
+    "roles.openstack.k-orc.cloud",
+    "routerinterfaces.openstack.k-orc.cloud",
+    "routers.openstack.k-orc.cloud",
+    "securitygroups.openstack.k-orc.cloud",
+    "servergroups.openstack.k-orc.cloud",
+    "servers.openstack.k-orc.cloud",
+    "services.openstack.k-orc.cloud",
+    "subnets.openstack.k-orc.cloud",
+    "trunks.openstack.k-orc.cloud",
+    "users.openstack.k-orc.cloud",
+    "volumes.openstack.k-orc.cloud",
+    "volumetypes.openstack.k-orc.cloud",
+})
+
+ORC_CRD_API_VERSION = "v1alpha1"
+
 MANAGEMENT_KUBERNETES_VERSION = ">=1.32.0-0 <1.37.0-0"
 
 
@@ -169,6 +200,24 @@ def verify_crds():
                         f"{name} must serve v1beta1")
 
 
+def verify_orc_crds():
+    names = {path.stem for path in ORC_CRD_DIRECTORY.glob("*.yaml")}
+    require(names == ORC_CRD_NAMES,
+            f"unexpected ORC CRD set: missing {ORC_CRD_NAMES - names}, extra {names - ORC_CRD_NAMES}")
+
+    for path in ORC_CRD_DIRECTORY.glob("*.yaml"):
+        crd = load_yaml(path)
+        name = crd["metadata"]["name"]
+        versions = {version["name"]: version for version in crd["spec"]["versions"]}
+
+        require(versions.keys() == {ORC_CRD_API_VERSION},
+                f"{name} must serve only {ORC_CRD_API_VERSION}")
+        require(versions[ORC_CRD_API_VERSION]["served"],
+                f"{name} must serve {ORC_CRD_API_VERSION}")
+        require(versions[ORC_CRD_API_VERSION]["storage"],
+                f"{name} must store {ORC_CRD_API_VERSION}")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--chart-version", required=True)
@@ -181,6 +230,7 @@ def main():
     verify_images(args)
     verify_feature_gates()
     verify_crds()
+    verify_orc_crds()
 
 
 if __name__ == "__main__":

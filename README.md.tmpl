@@ -22,8 +22,7 @@ Kubernetes v1.30-v1.36 are supported.
 ## Upgrading to Chart 0.4.0
 
 Chart 0.4.0 upgrades the core, kubeadm bootstrap, and kubeadm control-plane
-controllers to Cluster API v1.13.4. CAPO remains at v0.13.5 and ORC remains at
-v1.0.2.
+controllers to Cluster API v1.13.4, CAPO to v0.13.9, and ORC to v2.6.0.
 
 Before upgrading:
 
@@ -33,14 +32,19 @@ Before upgrading:
   deletion is active.
 * Inspect `status.storedVersions` on the CAPI, CABPK, and KCP CRDs. Migrate any
   objects still stored as `v1alpha3` or `v1alpha4` before applying the new CRDs.
+* Inventory any existing ORC custom resources, including `Image` objects. ORC
+  does not automatically adopt existing OpenStack or CAPO-managed resources, so
+  upgrading does not change ownership of anything already running.
 * Apply the regenerated CRDs before upgrading the controller deployments. Helm
-  does not upgrade CRDs placed in a chart's `crds/` directory.
+  does not upgrade CRDs placed in a chart's `crds/` directory. This applies to
+  the ORC CRDs too: ORC v2.6.0 introduces 23 new resource CRDs alongside
+  `Image`, and they must exist before the ORC controller is rolled.
 
-After upgrading, monitor the three CAPI controller deployments and the health of
-Cluster, KubeadmControlPlane, MachineDeployment, Machine, and OpenStackMachine
-resources. No workload Kubernetes upgrade or machine replacement is expected;
-stop the rollout if rendered specification changes would create replacement
-machines.
+After upgrading, monitor the three CAPI controller deployments, the ORC
+controller deployment, and the health of Cluster, KubeadmControlPlane,
+MachineDeployment, Machine, and OpenStackMachine resources. No workload
+Kubernetes upgrade or machine replacement is expected; stop the rollout if
+rendered specification changes would create replacement machines.
 
 ## Deploying One-Shot
 
